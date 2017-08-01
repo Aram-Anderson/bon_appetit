@@ -46,16 +46,34 @@ class Pantry
   end
 
   def what_can_i_make
+    i_can_make = what_can_i_make_helper
+    i_can_make.map {|recipe| recipe.name}
+  end
+
+  def how_many_can_i_make
+    how_many = Hash.new 0
+    divs = []
+    i_can_make = what_can_i_make_helper
+    i_can_make.each do |recipe|
+      recipe.ingredients.each do |ingredient, takes|
+        divs << stock[ingredient] / takes
+      end
+      how_many[recipe.name] = divs.sort.shift
+    end
+    how_many
+  end
+
+  def what_can_i_make_helper
     i_can_make = []
     cookbook.each do |recipe|
-    recipe.ingredients.all? do |k, v|
-      if stock[k] > v
-      i_can_make << recipe.name
+      recipe.ingredients.all? do |k, v|
+        if stock[k] > v
+        i_can_make << recipe
+        end
       end
     end
+    i_can_make.uniq
   end
-  i_can_make.uniq
-end
 
 
 end
