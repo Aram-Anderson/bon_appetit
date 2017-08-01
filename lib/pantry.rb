@@ -17,8 +17,27 @@ class Pantry
   end
 
   def convert_units(recipe)
+    converted = Hash.new 0
     recipe.ingredients.each do |k, v|
-      recipe.ingredients[k] = convert_units_helper(v)
+      converted[k] = convert_units_helper_1(v)
+    end
+    converted
+  end
+
+  def convert_units_helper_1(value)
+    if value > 100 && value % 100 != 0
+      units_1 = (value % 100).round(3)
+      units_2 = (value - value % 100).to_i
+      value = [convert_units_helper(units_2), convert_units_helper(units_1)]
+    elsif value > 100
+      value = [convert_units_helper(value)]
+    elsif (1..100).cover?(value) && value % 1 != 0
+      units_1 = (value % 1).round(3)
+      units_2 = (value - value % 1).to_i
+      value = [convert_units_helper(units_1), convert_units_helper(units_2)]
+    else
+      (1..100).cover?(value)
+      value = [convert_units_helper(value)]
     end
   end
 
@@ -26,11 +45,11 @@ class Pantry
     # if value.class == Float
     #   value = other_helper(value)
     if value < 1
-      value = {:quantity => value * 1000, :units => "Milli-Units"}
+      value = {:quantity => (value * 1000).to_i, :units => "Milli-Units"}
     elsif value > 100
       value = {:quantity => value / 100, :units => "Centi-Units"}
     else
-      value = {:quantity => value, :units => "Universal Units"}
+      value = {:quantity => value.to_i, :units => "Universal Units"}
     end
   end
 

@@ -44,9 +44,8 @@ class PantryTest < Minitest::Test
   end
 
   def test_it_can_convert_units_in_recipe
-    expected = {"Cayenne Pepper" => {quantity: 25, units: "Milli-Units"},
-    "Cheese" => {quantity: 75, units: "Universal Units"},
-    "Flour" => {quantity: 5, units: "Centi-Units"}}
+    #Changed test to match interaction pattern from iter 4
+    expected = {"Cayenne Pepper"=>[{:quantity=>25, :units=>"Milli-Units"}], "Cheese"=>[{:quantity=>75, :units=>"Universal Units"}], "Flour"=>[{:quantity=>5, :units=>"Centi-Units"}]}
 
     r = Recipe.new("Spicy Cheese Pizza")
     r.add_ingredient("Cayenne Pepper", 0.025)
@@ -57,7 +56,6 @@ class PantryTest < Minitest::Test
   end
 
   def test_it_can_convert_with_mixed_units
-    skip
     expected = {"Cayenne Pepper" => [{quantity: 25, units: "Milli-Units"}, {quantity: 1, units: "Universal Units"}], "Cheese" => [{quantity: 75, units: "Universal Units"}], "Flour" => [{quantity: 5, units: "Centi-Units"}, {quantity: 50, units: "Universal Units"}]}
 
     r = Recipe.new("Spicy Cheese Pizza")
@@ -65,8 +63,7 @@ class PantryTest < Minitest::Test
     r.add_ingredient("Cheese", 75)
     r.add_ingredient("Flour", 550)
     pantry = Pantry.new
-    pantry.convert_units(r)
-
+    assert_equal expected, pantry.convert_units(r)
   end
 
   def test_it_can_add_to_cookbook
